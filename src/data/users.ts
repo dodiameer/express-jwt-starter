@@ -1,3 +1,8 @@
+/**
+ * This file can be used as a wrapper for your data source for getting user data
+ */
+
+
 import { Roles } from "../types"
 
 export const users = [
@@ -24,6 +29,13 @@ export const users = [
   },
 ];
 
+/**
+ * Validates user credentials
+ * 
+ * @param {string} email
+ * @param {string} password
+ * @returns {any} The user object
+ */
 export const validateCredentials = (email: string, password: string) => {
   return users.find(
     (user) => user.email === email && user.password === password

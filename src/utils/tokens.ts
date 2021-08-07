@@ -1,5 +1,11 @@
 import jwt from "jsonwebtoken"
 
+/**
+ * Generates an access & refresh token pair.
+ * 
+ * @param {any} user The user object.
+ * @returns {[string, string]} The access & refresh token pair. `[access, refresh]`
+ */
 export const generateTokenPair = (user: any): [string, string] => {
   const accessToken = jwt.sign(
     {
@@ -30,6 +36,12 @@ export const generateTokenPair = (user: any): [string, string] => {
   return [accessToken, refreshToken];
 };
 
+/**
+ * Verifies a JWT token
+ * 
+ * @param {string} token The token to verify.
+ * @returns {[boolean, jwt.JwtPayload | Error]} The result of the verification. `[validity, payload | Error]`
+ */
 export const verifyToken = (
   token: string
 ): [true, jwt.JwtPayload] | [false, Error] => {

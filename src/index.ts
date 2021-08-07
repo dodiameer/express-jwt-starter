@@ -113,6 +113,8 @@ const main = async () => {
   );
 
   const port = process.env.PORT || 4000;
+  // Kill the port in development - The server doesn't stop on its own
+  // in development because it runs in an async function.
   !PROD && (await killPort(port));
 
   app.listen(port, () => {

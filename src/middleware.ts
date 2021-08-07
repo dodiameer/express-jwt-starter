@@ -3,6 +3,11 @@ import jwt from "jsonwebtoken";
 import { verifyToken } from "./utils/tokens"
 import { users } from "./data/users"
 
+/**
+ * Global middleware
+ * 
+ * Sets `req.user`, `req.token` and `req.refreshToken`
+ */
 export const FetchUserMiddleware = (
   req: express.Request,
   res: express.Response,
@@ -27,6 +32,8 @@ export const FetchUserMiddleware = (
     return next();
   }
 
+  // You can remove these lines and rely on the payload to be set
+  // if you want to use the token as the source of truth.
   const user = users.find((u) => u.id === (payload as jwt.JwtPayload).id);
   if (!user) {
     req.user = null;
@@ -34,11 +41,17 @@ export const FetchUserMiddleware = (
     return next();
   }
 
+  // Sets the user and token
   req.user = user;
   req.token = token;
   next();
 };
 
+/**
+ * Route middleware
+ * 
+ * Ensures that the user is authenticated
+ */
 export const EnsureAuthMiddleware = (
   req: express.Request,
   res: express.Response,
@@ -51,6 +64,13 @@ export const EnsureAuthMiddleware = (
   next();
 };
 
+/**
+ * Route middleware
+ * 
+ * Ensures that the user is *not* authenticated 
+ * 
+ * Useful for things like logging in and registering
+ */
 export const EnsureNoAuthMiddleware = (
   req: express.Request,
   res: express.Response,
@@ -63,6 +83,18 @@ export const EnsureNoAuthMiddleware = (
   next();
 };
 
+/**
+ * Route middleware
+ * 
+ * Ensures that there is a refresh token, but does not
+ * ensure that the user is authenticated (doesn't check
+ * for an auth header)
+ * 
+ * Useful for a refresh token endpoint, where the user
+ * is not authenticated, but the refresh token is
+ * still valid and the user can be authenticated through
+ * it, allowing for a "Remember me" feature.
+ */
 export const EnsureRefreshTokenMiddleware = (
   req: express.Request,
   res: express.Response,
@@ -75,6 +107,12 @@ export const EnsureRefreshTokenMiddleware = (
   next();
 };
 
+/**
+ * Route middleware factory (call as a function to return the middleware)
+ * 
+ * Ensures that `req.user.role` one of the supplied roles
+ * @param {string | string[]} roles The role(s) to check against
+ */
 export const EnsureRole = (role: string | string[]) => (
   req: express.Request,
   res: express.Response,
